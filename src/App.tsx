@@ -21,7 +21,10 @@ import {
   BarChart3,
   Layers,
   ShieldCheck,
-  Zap
+  Zap,
+  FileText,
+  Download,
+  Printer
 } from "lucide-react";
 import { 
   BarChart, 
@@ -199,10 +202,14 @@ const TransactionFlow = () => (
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 6;
+  const totalSteps = 7;
   
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -216,7 +223,7 @@ export default function App() {
   return (
     <div className="bg-slate-50 text-slate-900 font-sans selection:bg-orange-200">
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-slate-200 z-50">
+      <div className="fixed top-0 left-0 w-full h-1 bg-slate-200 z-50 no-print">
         <motion.div 
           className="h-full bg-orange-500"
           initial={{ width: "0%" }}
@@ -225,7 +232,7 @@ export default function App() {
       </div>
 
       {/* Navigation Controls */}
-      <div className="fixed bottom-6 right-6 flex gap-3 z-50">
+      <div className="fixed bottom-6 right-6 flex gap-3 z-50 no-print">
         <button 
           onClick={prevStep}
           disabled={currentStep === 0}
@@ -284,12 +291,20 @@ export default function App() {
                     <p className="text-xs text-slate-400 uppercase tracking-wider font-bold">Movimentação Anual</p>
                   </div>
                 </div>
-                <button 
-                  onClick={nextStep}
-                  className="mt-12 px-8 py-4 bg-orange-500 rounded-full font-bold text-lg hover:bg-orange-600 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto"
-                >
-                  Ver o Mercado <ArrowRight className="w-5 h-5" />
-                </button>
+                <div className="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
+                  <button 
+                    onClick={nextStep}
+                    className="px-8 py-4 bg-orange-500 rounded-full font-bold text-lg hover:bg-orange-600 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                  >
+                    Ver o Mercado <ArrowRight className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setCurrentStep(6)}
+                    className="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg transition-all flex items-center gap-2 border border-white/20"
+                  >
+                    <FileText className="w-5 h-5" /> Requisitos do Projeto
+                  </button>
+                </div>
               </div>
             </Section>
           </motion.div>
@@ -576,10 +591,306 @@ export default function App() {
             </Section>
           </motion.div>
         )}
+        {currentStep === 6 && (
+          <motion.div
+            key="step6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <Section className="bg-white">
+              <div className="max-w-4xl mx-auto py-10">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 no-print">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black">Requisitos</h2>
+                  </div>
+                  <button 
+                    onClick={handlePrint}
+                    className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg"
+                  >
+                    <Printer className="w-5 h-5" />
+                    Gerar PDF
+                  </button>
+                </div>
+
+                <div className="bg-slate-50 p-8 md:p-12 rounded-[2.5rem] border border-slate-200 shadow-sm print:shadow-none print:bg-white print:p-0 print:border-none">
+                  <div className="prose prose-slate max-w-none">
+                    <h1 className="text-3xl font-black mb-2">Documento de Requisitos do Projeto</h1>
+                    <h2 className="text-xl font-bold text-slate-500 mb-8">Plataforma de Marketplace de Peças entre Oficinas</h2>
+                    
+                    <div className="space-y-12 text-slate-700 leading-relaxed pb-20">
+                      {/* 1. Visão Geral */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">1.</span> Visão Geral do Projeto
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-bold mb-2">1.1 Objetivo</h4>
+                            <p>Desenvolver uma plataforma digital para negociação de peças automotivas entre oficinas, permitindo que empresas anunciem peças paradas em estoque ou publiquem demandas de compra para que outras oficinas apresentem propostas comerciais.</p>
+                            <p className="mt-2">A solução deverá funcionar como um marketplace B2B automotivo, com foco em:</p>
+                            <ul className="list-disc pl-5 mt-2 space-y-1">
+                              <li>recuperação de capital parado em estoque;</li>
+                              <li>conexão entre oficinas compradoras e vendedoras;</li>
+                              <li>controle básico de estoque;</li>
+                              <li>registro e acompanhamento de transações;</li>
+                              <li>cobrança de comissão sobre operações realizadas na plataforma.</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-bold mb-2">1.2 Plataformas Alvo</h4>
+                            <p>A solução deverá ser disponibilizada em: Web, iOS, Android.</p>
+                          </div>
+                          <div>
+                            <h4 className="font-bold mb-2">1.3 Estratégia Inicial</h4>
+                            <p>O projeto será estruturado em formato de MVP, priorizando a validação operacional e comercial da solução, com possibilidade de evolução por fases futuras.</p>
+                          </div>
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 2. Escopo */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">2.</span> Escopo do Projeto
+                        </h3>
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="font-bold mb-2">2.1 Escopo da Primeira Fase (MVP)</h4>
+                            <ul className="list-disc pl-5 mt-2 grid md:grid-cols-2 gap-x-8 gap-y-1">
+                              <li>cadastro e autenticação de oficinas;</li>
+                              <li>gerenciamento de perfil da oficina;</li>
+                              <li>cadastro e edição de peças;</li>
+                              <li>publicação de peças para o marketplace;</li>
+                              <li>visualização de peças publicadas por outras oficinas;</li>
+                              <li>busca e filtros básicos;</li>
+                              <li>manifestação de interesse em peças anunciadas;</li>
+                              <li>criação de demandas de compra por oficinas;</li>
+                              <li>envio de propostas para demandas abertas;</li>
+                              <li>registro simplificado de transações;</li>
+                              <li>cálculo básico de comissão da plataforma;</li>
+                              <li>painel administrativo inicial;</li>
+                              <li>operação em web e aplicativo mobile.</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-bold mb-2">2.2 Fora do Escopo Inicial</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-slate-500 italic">
+                              <li>split automático de pagamentos; conciliação financeira avançada; integração fiscal;</li>
+                              <li>logística/frete integrado; chat interno avançado em tempo real;</li>
+                              <li>reputação avançada com moderação robusta; integração com ERPs de oficinas;</li>
+                              <li>IA para reconhecimento automático de peças por imagem; motor de recomendação;</li>
+                              <li>analytics avançado; multi-idioma; arquitetura enterprise de alta escala.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 3. Planejamento */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">3.</span> Planejamento do Projeto
+                        </h3>
+                        <div className="space-y-6">
+                          {[
+                            { phase: "Fase 1 — Descoberta e Definição", obj: ["consolidar regras de negócio", "definir fluxos principais", "validar escopo do MVP", "estruturar backlog inicial"], ent: ["documento de escopo consolidado", "mapa de módulos", "definição inicial da arquitetura", "priorização de funcionalidades"] },
+                            { phase: "Fase 2 — Design e Arquitetura", obj: ["estruturar experiência do usuário", "desenhar componentes principais", "preparar base técnica do sistema"], ent: ["wireframes ou layout funcional", "modelagem inicial de banco", "definição da stack", "estrutura inicial de ambientes"] },
+                            { phase: "Fase 3 — Desenvolvimento do MVP", obj: ["implementar o núcleo funcional da plataforma"], ent: ["autenticação", "perfis", "estoque", "marketplace", "demandas", "propostas", "painel administrativo inicial", "deploy de ambientes"] },
+                            { phase: "Fase 4 — Testes e Homologação", obj: ["validar funcionamento", "corrigir falhas", "preparar entrega controlada"], ent: ["versão homologável", "ajustes finais", "validação dos fluxos principais"] },
+                            { phase: "Fase 5 — Publicação e Entrega", obj: ["disponibilizar a solução para uso inicial"], ent: ["aplicação web publicada", "build mobile preparada", "documentação básica de operação"] }
+                          ].map((f, i) => (
+                            <div key={i} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                              <h4 className="font-bold text-slate-900 mb-3">{f.phase}</h4>
+                              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <p className="font-bold text-xs uppercase text-slate-400 mb-2">Objetivos</p>
+                                  <ul className="list-disc pl-4 space-y-1">
+                                    {f.obj.map((o, j) => <li key={j}>{o}</li>)}
+                                  </ul>
+                                </div>
+                                <div>
+                                  <p className="font-bold text-xs uppercase text-slate-400 mb-2">Entregáveis</p>
+                                  <ul className="list-disc pl-4 space-y-1">
+                                    {f.ent.map((e, j) => <li key={j}>{e}</li>)}
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 4. Tecnologias */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">4.</span> Tecnologias Utilizadas
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-8">
+                          <div>
+                            <h4 className="font-bold mb-3">4.1 Front-end</h4>
+                            <ul className="space-y-2 text-sm">
+                              <li><span className="font-bold">Web:</span> Next.js</li>
+                              <li><span className="font-bold">Mobile:</span> React Native com Expo</li>
+                              <li><span className="font-bold">Interface:</span> TypeScript, Tailwind CSS</li>
+                            </ul>
+                          </div>
+                          <div>
+                            <h4 className="font-bold mb-3">4.2 Back-end & Infra</h4>
+                            <ul className="space-y-2 text-sm">
+                              <li><span className="font-bold">Backend:</span> Supabase (PostgreSQL, Auth, Storage)</li>
+                              <li><span className="font-bold">Serviços:</span> Node.js, AWS (complementar)</li>
+                              <li><span className="font-bold">Hospedagem:</span> Vercel (Web), Expo/EAS (Mobile)</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 5. Módulos */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">5.</span> Módulos do Sistema
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {[
+                            { t: "Autenticação", d: "Cadastro, login, recuperação de senha e controle de sessão." },
+                            { t: "Oficinas", d: "Cadastro de oficina, edição de perfil e dados cadastrais." },
+                            { t: "Estoque", d: "Cadastro/edição de peças, upload de imagens e status." },
+                            { t: "Marketplace", d: "Publicação, listagem, busca e filtros de anúncios." },
+                            { t: "Demandas", d: "Publicação de necessidades de compra detalhadas." },
+                            { t: "Propostas", d: "Envio, visualização e gestão de propostas (aceite/recusa)." },
+                            { t: "Transações", d: "Registro de negociações, status e cálculo de comissão." },
+                            { t: "Administrativo", d: "Gestão de usuários, anúncios, demandas e comissões." }
+                          ].map((m, i) => (
+                            <div key={i} className="p-4 bg-slate-100/50 rounded-xl border border-slate-200">
+                              <p className="font-bold text-slate-900 text-sm">{m.t}</p>
+                              <p className="text-xs text-slate-500">{m.d}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 6. Requisitos Funcionais */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">6.</span> Requisitos Funcionais
+                        </h3>
+                        <div className="space-y-8 text-sm">
+                          {[
+                            { cat: "6.1 Cadastro e Autenticação", reqs: ["RF-001. Cadastro de oficinas", "RF-002. Login com e-mail e senha", "RF-003. Recuperação de senha", "RF-004. Controle de acesso por perfil"] },
+                            { cat: "6.2 Perfil da Oficina", reqs: ["RF-005. Edição de dados cadastrais", "RF-006. Cadastro de informações comerciais", "RF-007. Exibição de status da conta"] },
+                            { cat: "6.3 Cadastro de Peças", reqs: ["RF-008. Cadastro com nome, desc, qtd, valor e imagens", "RF-009. Marca, modelo, veículo e código de referência", "RF-010. Edição de peças cadastradas", "RF-011. Inativação de peças", "RF-012. Status: disponível, reservada, vendida ou inativa"] },
+                            { cat: "6.4 Controle de Estoque", reqs: ["RF-013. Listagem de peças da oficina", "RF-014. Busca interna no estoque", "RF-015. Registro de quantidade disponível", "RF-016. Atualização manual de estoque"] },
+                            { cat: "6.5 Marketplace", reqs: ["RF-017. Listagem de peças publicadas", "RF-018. Busca por nome da peça", "RF-019. Filtro por marca, modelo ou veículo", "RF-020. Visualização de detalhes completos", "RF-021. Manifestação de interesse"] },
+                            { cat: "6.6 Demandas de Compra", reqs: ["RF-022. Publicação de demanda de compra", "RF-023. Detalhes da peça requerida", "RF-024. Definição de quantidade desejada", "RF-025. Observações adicionais", "RF-026. Listagem de demandas abertas"] },
+                            { cat: "6.7 Propostas", reqs: ["RF-027. Envio de propostas para demandas", "RF-028. Valor e observações da proposta", "RF-029. Visualização de propostas recebidas", "RF-030. Aceite ou recusa de propostas", "RF-031. Encerramento de demanda"] },
+                            { cat: "6.8 Transações e Comissão", reqs: ["RF-032. Registro de conclusão de negociação", "RF-033. Registro de valor final", "RF-034. Cálculo de comissão da plataforma", "RF-035. Visualização de transações concluídas", "RF-036. Acompanhamento de comissão prevista"] },
+                            { cat: "6.9 Administração", reqs: ["RF-037. Visualização de oficinas cadastradas", "RF-038. Visualização de anúncios ativos", "RF-039. Visualização de demandas abertas", "RF-040. Acompanhamento de propostas e transações", "RF-041. Ativação/desativação de registros"] },
+                            { cat: "6.10 Notificações", reqs: ["RF-042. Notificação de interesses recebidos", "RF-043. Notificação de propostas recebidas", "RF-044. Notificação de alterações de status"] }
+                          ].map((c, i) => (
+                            <div key={i}>
+                              <h4 className="font-bold text-slate-900 mb-2 border-b border-slate-100 pb-1">{c.cat}</h4>
+                              <ul className="grid md:grid-cols-2 gap-x-8 gap-y-1">
+                                {c.reqs.map((r, j) => <li key={j} className="flex items-start gap-2"><span className="text-orange-500 font-bold">•</span> {r}</li>)}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 7. Requisitos Não Funcionais */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">7.</span> Requisitos Não Funcionais
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-6 text-sm">
+                          {[
+                            { t: "Performance", d: "Resposta adequada, paginação e upload controlado." },
+                            { t: "Segurança", d: "HTTPS, senhas seguras, controle de acesso e validação." },
+                            { t: "Usabilidade", d: "Interface responsiva, fluxos simples e objetivos." },
+                            { t: "Disponibilidade", d: "Alta disponibilidade e estratégia de backup." },
+                            { t: "Escalabilidade", d: "Arquitetura evolutiva para crescimento da base." },
+                            { t: "Manutenibilidade", d: "Código modular, versionado e organizado." }
+                          ].map((rnf, i) => (
+                            <div key={i}>
+                              <p className="font-bold text-slate-900">{rnf.t}</p>
+                              <p className="text-slate-500">{rnf.d}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <hr className="border-slate-200" />
+
+                      {/* 8. Regras de Negócio */}
+                      <section>
+                        <h3 className="text-2xl font-black mb-4 flex items-center gap-2">
+                          <span className="text-orange-500">8.</span> Regras de Negócio Iniciais
+                        </h3>
+                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3 text-sm">
+                          {[
+                            "RN-001. Apenas oficinas cadastradas anunciam ou criam demandas.",
+                            "RN-002. Cada peça/demanda pertence a uma oficina específica.",
+                            "RN-005. Comissão da plataforma aplicada sobre transações concluídas.",
+                            "RN-006. Status da peça: disponível, reservada, vendida ou inativa.",
+                            "RN-009. MVP com registro manual/semiautomatizado, sem split automático."
+                          ].map((rn, i) => (
+                            <p key={i} className="flex items-start gap-2">
+                              <span className="text-orange-500 font-bold">✓</span> {rn}
+                            </p>
+                          ))}
+                        </div>
+                      </section>
+
+                      {/* 9 & 10. Premissas e Riscos */}
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <section>
+                          <h3 className="text-xl font-black mb-4">9. Premissas</h3>
+                          <ul className="list-disc pl-5 text-sm space-y-2">
+                            <li>Projeto iniciado como MVP com escopo controlado.</li>
+                            <li>Design funcional priorizando velocidade de entrega.</li>
+                            <li>Validação de fluxos em marcos definidos.</li>
+                          </ul>
+                        </section>
+                        <section>
+                          <h3 className="text-xl font-black mb-4 text-red-600">10. Riscos</h3>
+                          <ul className="list-disc pl-5 text-sm space-y-2">
+                            <li>Aumento de escopo durante o desenvolvimento.</li>
+                            <li>Dependência de decisões de negócio não consolidadas.</li>
+                            <li>Complexidade financeira futura (automação de repasses).</li>
+                          </ul>
+                        </section>
+                      </div>
+
+                      <section className="pt-10 border-t border-slate-200">
+                        <p className="text-center text-slate-400 text-xs">
+                          Este documento define os requisitos iniciais para construção da plataforma B2B de negociação de peças entre oficinas.
+                        </p>
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Progress Dots */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-3 z-50">
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 hidden md:flex flex-col gap-3 z-50 no-print">
         {Array.from({ length: totalSteps }).map((_, i) => (
           <button
             key={i}
